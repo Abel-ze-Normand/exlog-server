@@ -1,0 +1,2 @@
+defmodule SdvorLogger do
+end
