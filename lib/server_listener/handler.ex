@@ -12,7 +12,10 @@ defmodule SdvorLogger.ServerListener.Handler do
 
   def connection(socket) do
     {:ok, msg} = :erlangzmq.recv(socket)
-    msg |> SdvorLogger.Dispatcher.Main.handle
+    :erlangzmq.send(socket, <<"ok">>)
+    spawn(fn() ->
+      msg |> SdvorLogger.Dispatcher.Main.handle
+    end)
     connection(socket)
   end
 

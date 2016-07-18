@@ -32,7 +32,7 @@ class SdvorLoggerServiceClient:
         self.sock.connect("tcp://{0}:{1}".format(connection_host, connection_port))
         # self.sock = socket.socket()
         # self.sock.connect((connection_host, connection_port))
-        # self.msg_type = msg_type
+        self.msg_type = msg_type
 
     def __del__(self):
         self.sock.close()
@@ -59,16 +59,19 @@ class SdvorLoggerServiceClient:
         to_send = self.prepare_string(string, args, "INFO")
         print(to_send)
         self.sock.send(to_send.encode("utf-8"))
+        self.sock.recv()
 
     def warning(self, string, *args):
         to_send = self.prepare_string(string, args, "WARN")
         print(to_send)
         self.sock.send(to_send.encode("utf-8"))
+        self.sock.recv()
 
     def critical(self, string, *args):
         to_send = self.prepare_string(string, args, "CRIT")
         print(to_send)
         self.sock.send(to_send.encode("utf-8"))
+        self.sock.recv()
 
 ### EXAMPLE :: then just 'from logger_service_py.main import LOGGER' anywhere in the code ###
 LOGGER = SdvorLoggerServiceClient.instance("regular")

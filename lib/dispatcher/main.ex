@@ -2,7 +2,6 @@ defmodule SdvorLogger.Dispatcher.Main do
   require Logger
 
   def handle(msg) do
-    Logger.info "handling message"
     msg |> decode |> deliver
   end
 
