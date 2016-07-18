@@ -17,14 +17,15 @@ defmodule SdvorLogger.Mixfile do
     [
       env: [
         port:          5556,
-        path_to_file:  "/var/log/logger_service",
+        #path_to_file:  "/var/log/logger_service",
+        path_to_file:  "/",
         filename:      "logfile.log",
         workers_count: 20,
         db_name:       "queue_msgs",
         hostname:      "MongoDB_Queue_msgs"
       ],
       mod: { SdvorLogger.ServerListener.Server, []},
-      applications: [:logger, :mongodb, :poolboy],
+      applications: [:logger, :mongodb, :poolboy, :erlangzmq],
       registered: [:sdvor_logger]
     ]
   end
@@ -42,6 +43,6 @@ defmodule SdvorLogger.Mixfile do
     [{:poison, "~>2.0"},
      {:mongodb, ">=0.0.0"},
      {:poolboy, ">=0.0.0"},
-     {:czmq, github: "gar1t/erlang-czmq", compile: "./configure; make"}]
+     {:erlangzmq, "~>1.0.0", git: "git@github.com:chovencorp/erlangzmq.git"}]
   end
 end

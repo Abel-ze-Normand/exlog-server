@@ -1,5 +1,10 @@
 %{"connection": {:hex, :connection, "1.0.3", "3145f7416be3df248a4935f24e3221dc467c1e3a158d62015b35bd54da365786", [:mix], []},
   "czmq": {:git, "https://github.com/gar1t/erlang-czmq.git", "50605c06a63fd178affdbf620ed63f7ced56bc3d", []},
+  "erlangzmq": {:git, "git@github.com:chovencorp/erlangzmq.git", "72a1ffc227f5e5644bb1dfa99475a93ce4387f05", []},
+  "ezmq": {:hex, :ezmq, "0.2.0", "e7796cf57ef36c279d53a734ac3ebdaf84451d7d79fbdfde52876f7eb582f45a", [:rebar, :make], [{:lager, "~> 2.1.1", [hex: :lager, optional: false]}, {:gen_listener_tcp, "~> 0.3.1", [hex: :gen_listener_tcp, optional: false]}]},
+  "gen_listener_tcp": {:hex, :gen_listener_tcp, "0.3.2", "03ba494a1e482e3ba2047da7f9f084217202c83f9cc5ac876c5870bba77b7f2b", [:rebar], []},
+  "goldrush": {:hex, :goldrush, "0.1.8", "2024ba375ceea47e27ea70e14d2c483b2d8610101b4e852ef7f89163cdb6e649", [:rebar3], []},
+  "lager": {:hex, :lager, "2.1.1", "8e389f916384abf5f62169969bd7515c4c252cbbda53feebbef90f47db5eaad1", [:make, :rebar], [{:goldrush, "~> 0.1.6", [hex: :goldrush, optional: false]}]},
   "mongodb": {:hex, :mongodb, "0.1.1", "8737d8f57466b4171f8216f76aa1ab3855d55220b19a1a248fedc96c9f50c274", [:mix], [{:poolboy, "~> 1.5", [hex: :poolboy, optional: true]}, {:connection, "~> 1.0", [hex: :connection, optional: false]}]},
   "poison": {:hex, :poison, "2.2.0", "4763b69a8a77bd77d26f477d196428b741261a761257ff1cf92753a0d4d24a63", [:mix], []},
   "poolboy": {:hex, :poolboy, "1.5.1", "6b46163901cfd0a1b43d692657ed9d7e599853b3b21b95ae5ae0a777cf9b6ca8", [:rebar], []}}

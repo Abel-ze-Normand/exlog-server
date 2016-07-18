@@ -43,9 +43,8 @@ defmodule SdvorLogger.ServerListener.Server do
     #   [:binary, packet: :raw, active: false, reuseaddr: true]
     # )
 
-    {:ok, ctx} = :czmq.start_link()
-    socket = :czmq.zsocket_new(ctx, :czmq_const.zmq_rep)
-    {:ok, port} = :czmq.zsocket_bind(socket, "tcp://*:#{Application.get_env(:sdvor_logger, :port)}")
+    {:ok, socket} = :erlangzmq.socket(:rep)
+    {:ok, _pid} = :erlangzmq.bind(socket, :tcp, '0.0.0.0', Application.get_env(:sdvor_logger, :port))
 
     Logger.info "Ready to accept connections..."
     # activate supervision

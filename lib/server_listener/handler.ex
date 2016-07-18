@@ -11,7 +11,7 @@ defmodule SdvorLogger.ServerListener.Handler do
   end
 
   def connection(socket) do
-    {:ok, msg} = :czmq.zstr_recv(socket)
+    {:ok, msg} = :erlangzmq.recv(socket)
     msg |> SdvorLogger.Dispatcher.Main.handle
     connection(socket)
   end
@@ -25,7 +25,7 @@ defmodule SdvorLogger.ServerListener.Handler do
     #{:ok, client} = :gen_tcp.accept(socket)
     Logger.info "New connection"
     spawn(__MODULE__, :next_connection, [socket])
-    handle_connection(client)
+    #handle_connection(client)
   end
 
   def handle_connection(client_socket) do
