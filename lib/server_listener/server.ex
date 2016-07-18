@@ -26,9 +26,9 @@ defmodule SdvorLogger.ServerListener.Server do
       Application.get_env(:sdvor_logger, :path_to_file),
       Application.get_env(:sdvor_logger, :filename)
     )
-    # {:ok, _res } = SdvorLogger.MongoAdapter.Adapter.start(
-    #   Application.get_env(:sdvor_logger, :db_name)
-    # )
+    {:ok, _res } = SdvorLogger.MongoAdapter.Adapter.start(
+      Application.get_env(:sdvor_logger, :db_name)
+    )
     # :gen_tcp socket options:
     # :binary – way of decoding package. can be a list, but binary is faster
     # packet: :raw raw – full packet, line – delimeted by line breaks

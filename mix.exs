@@ -17,12 +17,12 @@ defmodule SdvorLogger.Mixfile do
     [
       env: [
         port:          5556,
-        #path_to_file:  "/var/log/logger_service",
-        path_to_file:  "/",
+        path_to_file:  "/var/log/logger_service",
+        #path_to_file:  "/", #debug only
         filename:      "logfile.log",
         workers_count: 20,
         db_name:       "queue_msgs",
-        hostname:      "MongoDB_Queue_msgs"
+        mongo_hostname:      "MongoDB_Queue_msgs"
       ],
       mod: { SdvorLogger.ServerListener.Server, []},
       applications: [:logger, :mongodb, :poolboy, :erlangzmq],

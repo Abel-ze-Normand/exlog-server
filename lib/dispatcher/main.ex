@@ -13,7 +13,7 @@ defmodule SdvorLogger.Dispatcher.Main do
   def deliver(msg) when is_map(msg) do
     case msg["msg_type"] do
       "regular" -> SdvorLogger.FileAdapter.Adapter.write_log(msg)
-      "json" -> SdvorLogger.MongoAdapter.Adapter.write_log(msg)
+      "json" -> msg["message"] |> Poison.Parser.parse! |> SdvorLogger.MongoAdapter.Adapter.write_log
       _ -> SdvorLogger.FileAdapter.Adapter.write_log(msg)
     end
     {:ok, msg}

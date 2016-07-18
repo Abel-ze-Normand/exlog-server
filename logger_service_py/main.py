@@ -17,22 +17,32 @@ class SdvorLoggerServiceClient:
     Singleton client for SdvorLogger service. Pass in constructor URI to establish connection
     """
     __instance = None
+    __json_instance = None
 
     @staticmethod
     def instance(msg_type=''):
-        if SdvorLoggerServiceClient.__instance:
-            return SdvorLoggerServiceClient.__instance
-        else:
-            SdvorLoggerServiceClient.__instance = SdvorLoggerServiceClient(config.LOGGER_HOST, config.LOGGER_PORT, msg_type)
-            return SdvorLoggerServiceClient.__instance
+        if msg_type == 'json':
+            if SdvorLoggerServiceClient.__json_instance:
+                return SdvorLoggerServiceClient.__json_instance
+            else:
+                SdvorLoggerServiceClient.__json_instance = SdvorLoggerServiceClient(config.LOGGER_HOST, config.LOGGER_PORT, 'json')
+                return SdvorLoggerServiceClient.__json_instance
+        elif msg_type == 'regular':
+            if SdvorLoggerServiceClient.__instance:
+                return SdvorLoggerServiceClient.__instance
+            else:
+                SdvorLoggerServiceClient.__instance = SdvorLoggerServiceClient(config.LOGGER_HOST, config.LOGGER_PORT, 'regular')
+                return SdvorLoggerServiceClient.__instance
 
     def __init__(self, connection_host, connection_port, msg_type):
+        addr = socket.gethostbyname(connection_host)
         context = zmq.Context()
         self.sock = context.socket(zmq.REQ)
-        self.sock.connect("tcp://{0}:{1}".format(connection_host, connection_port))
+        self.sock.connect("tcp://{0}:{1}".format(addr, connection_port))
+        self.msg_type = msg_type
         # self.sock = socket.socket()
         # self.sock.connect((connection_host, connection_port))
-        self.msg_type = msg_type
+        # self.msg_type = msg_type
 
     def __del__(self):
         self.sock.close()
