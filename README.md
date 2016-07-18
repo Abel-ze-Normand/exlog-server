@@ -45,3 +45,4 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
     ```
     docker run -it --link MongoDB_Queue_msgs --rm mongo sh -c 'exec mongo 'MongoDB_Queue_msgs:27017/queue_msgs''
     ```
+  9. Dependencies list: mongo <---- logger <----- application
