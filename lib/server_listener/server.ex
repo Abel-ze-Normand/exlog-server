@@ -35,10 +35,18 @@ defmodule SdvorLogger.ServerListener.Server do
     # active: :false true – socket open for new connections and all packets will be accepted (active mode)
     #                false – socket open for new connections and after one packet of data transmission channel will be clossed (passive mode)
     #                :once - socket open for new connections and accepts only one message in active mode and then switches to passive
-    {:ok, socket} = :gen_tcp.listen(
-      Application.get_env(:sdvor_logger, :port),
-      [:binary, packet: :raw, active: false, reuseaddr: true]
-    )
+
+
+    # generic tcp
+    # {:ok, socket} = :gen_tcp.listen(
+    #   Application.get_env(:sdvor_logger, :port),
+    #   [:binary, packet: :raw, active: false, reuseaddr: true]
+    # )
+
+    {:ok, ctx} = :czmq.start_link()
+    socket = :czmq.zsocket_new(ctx, :czmq_const.zmq_rep)
+    {:ok, port} = :czmq.zsocket_bind(socket, "tcp://*:#{Application.get_env(:sdvor_logger, :port)}")
+
     Logger.info "Ready to accept connections..."
     # activate supervision
     {:ok, sup} = Supervisor.start_link(__MODULE__, socket)

@@ -41,6 +41,7 @@ defmodule SdvorLogger.Mixfile do
   defp deps do
     [{:poison, "~>2.0"},
      {:mongodb, ">=0.0.0"},
-     {:poolboy, ">=0.0.0"}]
+     {:poolboy, ">=0.0.0"},
+     {:czmq, github: "gar1t/erlang-czmq", compile: "./configure; make"}]
   end
 end

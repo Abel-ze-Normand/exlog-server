@@ -7,6 +7,7 @@ defmodule SdvorLogger.FileAdapter.Adapter do
   Entrypoint for application
   """
   def start(path_to_file, filename) do
+    File.mkdir_p path_to_file
     {:ok, pid} = File.open(
       "#{path_to_file}/#{DateTime.utc_now |> DateTime.to_string}-#{filename}",
       [:append, :delayed_write]

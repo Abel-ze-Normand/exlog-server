@@ -6,14 +6,23 @@ defmodule SdvorLogger.ServerListener.Handler do
   """
   def start_link(socket) do
     Logger.info "Worker started!"
-    next_connection(socket)
+    #next_connection(socket)
+    connection(socket)
   end
+
+  def connection(socket) do
+    {:ok, msg} = :czmq.zstr_recv(socket)
+    msg |> SdvorLogger.Dispatcher.Main.handle
+    connection(socket)
+  end
+
+  ### OLD ###
 
   @doc """
   Awaits for new connection and serves messages
   """
   def next_connection(socket) do
-    {:ok, client} = :gen_tcp.accept(socket)
+    #{:ok, client} = :gen_tcp.accept(socket)
     Logger.info "New connection"
     spawn(__MODULE__, :next_connection, [socket])
     handle_connection(client)

@@ -1,11 +1,13 @@
 defmodule SdvorLogger.Dispatcher.Main do
+  require Logger
+
   def handle(msg) do
-    spawn_link(fn() ->
-      msg |> decode |> deliver
-    end)
+    Logger.info "handling message"
+    msg |> decode |> deliver
   end
 
   def decode(msg) do
+    msg |> inspect |> Logger.info
     Poison.Parser.parse!(msg)
   end
 

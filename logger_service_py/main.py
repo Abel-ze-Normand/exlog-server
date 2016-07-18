@@ -2,6 +2,7 @@ import socket
 from datetime import datetime
 from inspect import currentframe, getframeinfo
 import config
+import zmq
 
 try:
     from ujson import loads as json_loads, dumps as json_dumps
@@ -26,9 +27,12 @@ class SdvorLoggerServiceClient:
             return SdvorLoggerServiceClient.__instance
 
     def __init__(self, connection_host, connection_port, msg_type):
-        self.sock = socket.socket()
-        self.sock.connect((connection_host, connection_port))
-        self.msg_type = msg_type
+        context = zmq.Context()
+        self.sock = context.socket(zmq.REQ)
+        self.sock.connect("tcp://{0}:{1}".format(connection_host, connection_port))
+        # self.sock = socket.socket()
+        # self.sock.connect((connection_host, connection_port))
+        # self.msg_type = msg_type
 
     def __del__(self):
         self.sock.close()
