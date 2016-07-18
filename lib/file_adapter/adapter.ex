@@ -7,7 +7,7 @@ defmodule SdvorLogger.FileAdapter.Adapter do
   Entrypoint for application
   """
   def start(path_to_file, filename) do
-    {:ok, pid} = File.open "#{path_to_file}/#{filename}", [:write]
+    {:ok, pid} = File.open "#{path_to_file}/#{filename}", [:append, :delayed_write]
     Logger.info "File to write opened"
     GenServer.start_link(__MODULE__, pid, name: :file_adapter)
   end
