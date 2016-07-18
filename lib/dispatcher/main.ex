@@ -1,17 +1,22 @@
 defmodule SdvorLogger.Dispatcher.Main do
   def handle(msg) do
-    msg |> decode |> deliver
+    spawn_link(fn() ->
+      msg |> decode |> deliver
+    end)
   end
 
   def decode(msg) do
     Poison.Parser.parse!(msg)
   end
 
-  def deliver(%{"msg_type": "regular"} = msg) do
-    SdvorLogger.FileAdapter.Adapter.write_log(msg)
+  def deliver(msg) when is_map(msg) do
+    case msg["msg_type"] do
+      "regular" -> SdvorLogger.FileAdapter.Adapter.write_log(msg)
+      "json" -> SdvorLogger.MongoAdapter.Adapter.write_log(msg)
+      _ -> SdvorLogger.FileAdapter.Adapter.write_log(msg)
+    end
+    {:ok, msg}
   end
-  def deliver(%{"msg_type": "json"} = msg) do
-    SdvorLogger.MongoAdapter.Adapter.write_log(msg)
-  end
+
   def deliver(msg), do: SdvorLogger.FileAdapter.Adapter.write_log(msg)
 end

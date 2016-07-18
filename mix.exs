@@ -17,7 +17,7 @@ defmodule SdvorLogger.Mixfile do
     [
       env: [
         port:          5556,
-        path_to_file:  "",
+        path_to_file:  "/var/log/logger_service",
         filename:      "logfile.log",
         workers_count: 20,
         db_name:       "queue_msgs",
