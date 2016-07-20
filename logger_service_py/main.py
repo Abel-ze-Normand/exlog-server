@@ -16,23 +16,15 @@ class SdvorLoggerServiceClient:
     """
     Singleton client for SdvorLogger service. Pass in constructor URI to establish connection
     """
-    __instance = None
-    __json_instance = None
+    __instances = dict()
 
     @staticmethod
-    def instance(msg_type=''):
-        if msg_type == 'json':
-            if SdvorLoggerServiceClient.__json_instance:
-                return SdvorLoggerServiceClient.__json_instance
-            else:
-                SdvorLoggerServiceClient.__json_instance = SdvorLoggerServiceClient(config.LOGGER_HOST, config.LOGGER_PORT, 'json')
-                return SdvorLoggerServiceClient.__json_instance
-        elif msg_type == 'regular':
-            if SdvorLoggerServiceClient.__instance:
-                return SdvorLoggerServiceClient.__instance
-            else:
-                SdvorLoggerServiceClient.__instance = SdvorLoggerServiceClient(config.LOGGER_HOST, config.LOGGER_PORT, 'regular')
-                return SdvorLoggerServiceClient.__instance
+    def instance(msg_type="regular"):
+        # client and server will now support any type of messages
+        inst = __instances.get(msg_type)
+        if not inst:
+            inst = __instances[msg_type] = SdvorLoggerServiceClient(config.LOGGER_HOST, config.LOGGER_PORT, msg_type)
+        return inst
 
     def __init__(self, connection_host, connection_port, msg_type):
         addr = socket.gethostbyname(connection_host)
@@ -40,15 +32,11 @@ class SdvorLoggerServiceClient:
         self.sock = context.socket(zmq.REQ)
         self.sock.connect("tcp://{0}:{1}".format(addr, connection_port))
         self.msg_type = msg_type
-        # self.sock = socket.socket()
-        # self.sock.connect((connection_host, connection_port))
-        # self.msg_type = msg_type
 
     def __del__(self):
         self.sock.close()
 
     def prepare_string(self, string, args, level):
-        frameinfo = getframeinfo(currentframe())
         try:
             string = string % args
         except:
@@ -84,4 +72,4 @@ class SdvorLoggerServiceClient:
         self.sock.recv()
 
 ### EXAMPLE :: then just 'from logger_service_py.main import LOGGER' anywhere in the code ###
-LOGGER = SdvorLoggerServiceClient.instance("regular")
+LOGGER = SdvorLoggerServiceClient.instance(msg_type = "regular")
