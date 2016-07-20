@@ -3,7 +3,7 @@ defmodule SdvorLogger.Mixfile do
 
   def project do
     [app: :sdvor_logger,
-     version: "0.1.0",
+     version: "0.2.0",
      elixir: "~> 1.3",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
@@ -16,13 +16,10 @@ defmodule SdvorLogger.Mixfile do
   def application do
     [
       env: [
-        port:          5556,
-        path_to_file:  "/var/log/logger_service",
-        #path_to_file:  "/", #debug only
-        filename:      "logfile.log",
-        workers_count: 20,
-        db_name:       "queue_msgs",
-        mongo_hostname:      "MongoDB_Queue_msgs"
+        port:           5556,
+        workers_count:  20,
+        db_name:        "log_msgs",
+        mongo_hostname: "MongoDB_Queue_msgs"
       ],
       mod: { SdvorLogger.ServerListener.Server, []},
       applications: [:logger, :mongodb, :poolboy, :erlangzmq],
