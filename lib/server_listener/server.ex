@@ -22,26 +22,16 @@ defmodule SdvorLogger.ServerListener.Server do
     port - number of TCP port for avaiting connections
   """
   def start(_type, _) do
-    {:ok, _res } = SdvorLogger.FileAdapter.Adapter.start(
+
+    ### ADAPTERS INITIALIZATION ###
+    {:ok, _res } = SdvorLogger.FileAdapter.Adapter.start_link(
       Application.get_env(:sdvor_logger, :path_to_file),
       Application.get_env(:sdvor_logger, :filename)
     )
-    {:ok, _res } = SdvorLogger.MongoAdapter.Adapter.start(
+    {:ok, _res } = SdvorLogger.MongoAdapter.Adapter.start_link(
       Application.get_env(:sdvor_logger, :db_name)
     )
-    # :gen_tcp socket options:
-    # :binary – way of decoding package. can be a list, but binary is faster
-    # packet: :raw raw – full packet, line – delimeted by line breaks
-    # active: :false true – socket open for new connections and all packets will be accepted (active mode)
-    #                false – socket open for new connections and after one packet of data transmission channel will be clossed (passive mode)
-    #                :once - socket open for new connections and accepts only one message in active mode and then switches to passive
-
-
-    # generic tcp
-    # {:ok, socket} = :gen_tcp.listen(
-    #   Application.get_env(:sdvor_logger, :port),
-    #   [:binary, packet: :raw, active: false, reuseaddr: true]
-    # )
+    ### END OF ADAPTERS INITIALIZATION ###
 
     {:ok, socket} = :erlangzmq.socket(:rep)
     {:ok, _pid} = :erlangzmq.bind(socket, :tcp, '0.0.0.0', Application.get_env(:sdvor_logger, :port))
@@ -61,7 +51,7 @@ defmodule SdvorLogger.ServerListener.Server do
   end
 
   @doc """
-  workers starter
+  Workers starter
   """
   def start_workers(sup, socket, workers_count) do
     Logger.info "Starting workers..."

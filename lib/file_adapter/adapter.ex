@@ -2,18 +2,17 @@ defmodule SdvorLogger.FileAdapter.Adapter do
   use GenServer
   require Logger
 
-
   @doc """
   Entrypoint for application
   """
-  def start(path_to_file, filename) do
+  def start_link(path_to_file, filename) do
     File.mkdir_p path_to_file
-    {:ok, pid} = File.open(
+    {:ok, file_pid} = File.open(
       "#{path_to_file}/#{DateTime.utc_now |> DateTime.to_string}-#{filename}",
       [:append, :delayed_write]
     )
     Logger.info "File to write opened"
-    GenServer.start_link(__MODULE__, pid, name: :file_adapter)
+    GenServer.start_link(__MODULE__, file_pid, name: :file_adapter)
   end
 
   @doc """
@@ -25,15 +24,15 @@ defmodule SdvorLogger.FileAdapter.Adapter do
 
   ### GENSERVER CALLBACKS ###
 
-  def handle_cast({:write, msg}, pid) when is_map(msg) do
+  def handle_cast({:write, msg}, file_pid) when is_map(msg) do
     line = Poison.encode!(msg)
-    IO.binwrite(pid, line <> "\n")
-    {:noreply, pid}
+    IO.binwrite(file_pid, line <> "\n")
+    {:noreply, file_pid}
   end
 
-  def handle_cast({:write, msg}, pid) do
-    IO.binwrite(pid, msg <> "\n")
-    {:noreply, pid}
+  def handle_cast({:write, msg}, file_pid) do
+    IO.binwrite(file_pid, msg <> "\n")
+    {:noreply, file_pid}
   end
 
   def terminate(_reason, pid) do

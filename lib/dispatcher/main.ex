@@ -14,10 +14,9 @@ defmodule SdvorLogger.Dispatcher.Main do
     case msg["msg_type"] do
       "regular" -> SdvorLogger.FileAdapter.Adapter.write_log(msg)
       "json" -> msg["message"] |> Poison.Parser.parse! |> SdvorLogger.MongoAdapter.Adapter.write_log
-      _ -> SdvorLogger.FileAdapter.Adapter.write_log(msg)
+      _ -> msg |> Map.put("unhandled", true) |> SdvorLogger.FileAdapter.Adapter.write_log
     end
     {:ok, msg}
   end
-
-  def deliver(msg), do: SdvorLogger.FileAdapter.Adapter.write_log(msg)
+  def deliver(msg), do: ("UNHANDLED::" <> to_string(msg)) |> SdvorLogger.FileAdapter.Adapter.write_log
 end
