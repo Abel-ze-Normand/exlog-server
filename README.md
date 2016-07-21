@@ -27,7 +27,7 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
   4. Ensure that mongo container is available! And provide link to this container or alias
 
     ```
-    docker run --rm --link MongoDB_Queue_msgs -p=0.0.0.0:5556:5556/tcp
+    docker run --rm --link MongoDB_Queue_msgs -p=0.0.0.0:5556:5556/tcp logger_service
     ```
 
   5. Mongo container can be used as-is, no customizations, only remember to mount volume to have access to data
