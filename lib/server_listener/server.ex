@@ -4,7 +4,7 @@ defmodule SdvorLogger.ServerListener.Server do
   require Logger
 
   @doc """
-  Supervisor callback
+  Workers supervisor callback
   """
   def init(_) do
     Logger.info "Init supervisor..."
@@ -17,45 +17,37 @@ defmodule SdvorLogger.ServerListener.Server do
 
   @doc """
   Entrypoint for application.
-
-  params:
-    port - number of TCP port for avaiting connections
   """
   def start(_type, _) do
+    ## INIT ALL ##
+    with {:ok, _rma_pid} <- SdvorLogger.RegularMsgsAdapter.start_link(Application.get_env(:sdvor_logger, :db_name)),
+         {:ok, _jma_pid} <- SdvorLogger.JsonMsgsAdapter.start_link(Application.get_env(:sdvor_logger, :db_name)),
+         {:ok, socket}   <- :erlangzmq.socket(:rep),
+         {:ok, _pid}     <- :erlangzmq.bind(socket, :tcp, '0.0.0.0', Application.get_env(:sdvor_logger, :port)),
+                            Logger.info("Ready to accept connections..."),
+         # activate supervision
+         {:ok, sup}      <- Supervisor.start_link(__MODULE__, socket),
+         _workers_pid    <- spawn_link(__MODULE__, :start_workers, [sup, socket, Application.get_env(:sdvor_logger, :workers_count)]) do
+      :ok
+    else
+      _ -> exit(1)
+    end
 
-    ### ADAPTERS INITIALIZATION ###
-    {:ok, _res } = SdvorLogger.FileAdapter.Adapter.start_link(
-      Application.get_env(:sdvor_logger, :path_to_file),
-      Application.get_env(:sdvor_logger, :filename)
-    )
-    {:ok, _res } = SdvorLogger.MongoAdapter.Adapter.start_link(
-      Application.get_env(:sdvor_logger, :db_name)
-    )
-    ### END OF ADAPTERS INITIALIZATION ###
-
-    {:ok, socket} = :erlangzmq.socket(:rep)
-    {:ok, _pid} = :erlangzmq.bind(socket, :tcp, '0.0.0.0', Application.get_env(:sdvor_logger, :port))
-
-    Logger.info "Ready to accept connections..."
-    # activate supervision
-    {:ok, sup} = Supervisor.start_link(__MODULE__, socket)
-    # they will be started only when it needed so
-    spawn_link(__MODULE__, :start_workers, [sup, socket, Application.get_env(:sdvor_logger, :workers_count)])
     infinite_loop
   end
 
   # TODO: please find a way to not use this
   def infinite_loop do
-    Process.sleep(10)
+    Process.sleep(50)
     infinite_loop
   end
 
   @doc """
-  Workers starter
+  Workers starter. All workers will started as soon, as it needed
   """
   def start_workers(sup, socket, workers_count) do
     Logger.info "Starting workers..."
     (1..workers_count) |> Enum.each(fn(_) -> Supervisor.start_child(sup, [socket]) end)
-    Logger.info "All workers ready!"
+    Logger.info "All workers warmed up!"
   end
 end

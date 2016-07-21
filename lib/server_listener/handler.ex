@@ -5,7 +5,7 @@ defmodule SdvorLogger.ServerListener.Handler do
   Entry point for started child
   """
   def start_link(socket) do
-    Logger.info "Worker started!"
+    Logger.info "Worker #{inspect self} started!"
     next_connection(socket)
   end
 
@@ -17,12 +17,6 @@ defmodule SdvorLogger.ServerListener.Handler do
   end
 
   defp handle(msg) do
-    res = spawn_link(SdvorLogger.Dispatcher.Main, :handle, [msg])
-    case res do
-      {:ok, _pid} ->
-        :ok
-      _ ->
-        handle(msg)
-    end
+    {:ok, _pid} = spawn_link(SdvorLogger.Dispatcher, :handle, [msg])
   end
 end
